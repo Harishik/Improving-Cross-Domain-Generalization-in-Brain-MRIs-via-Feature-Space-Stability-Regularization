@@ -10,6 +10,7 @@ https://github.com/user-attachments/assets/86d0c26b-c0d3-4b89-9203-61b8f636cbaf
 [![DOI](https://img.shields.io/badge/DOI-10.3390%2Fmath14061082-blue)](https://doi.org/10.3390/math14061082)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![Code License](https://img.shields.io/badge/Code-MIT-green)](LICENSE)
 [![Paper License](https://img.shields.io/badge/Paper-CC%20BY%204.0-lightgrey)](https://creativecommons.org/licenses/by/4.0/)
 
 [Paper](https://doi.org/10.3390/math14061082) · [Method](#method) · [Results](#results) · [Getting started](#getting-started) · [Citation](#citation)
@@ -116,6 +117,7 @@ Images are converted to single-channel grayscale and resized to 224 × 224. No i
 ├── src/
 │   └── main.py          # End-to-end pipeline (exported from the Colab notebook)
 ├── requirements.txt
+├── LICENSE
 ├── CITATION.cff
 └── README.md
 ```
@@ -198,4 +200,6 @@ If you use this work, please cite:
 
 ## License
 
-The paper is published open access under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Datasets are subject to their own licenses.
+- **Code:** released under the [MIT License](LICENSE).
+- **Paper:** published open access in *Mathematics* under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- **Datasets:** Kaggle Brain MRI and BRISC-2025 are not included in this repository and remain subject to their own licenses.
