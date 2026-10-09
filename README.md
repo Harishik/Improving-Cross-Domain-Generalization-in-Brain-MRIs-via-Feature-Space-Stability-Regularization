@@ -1,6 +1,6 @@
 <div align="center">
 
-<!-- INTRO VIDEO -->
+<a href="https://github.com/Harishik/Improving-Cross-Domain-Generalization-in-Brain-MRIs-via-Feature-Space-Stability-Regularization/blob/main/assets/fssr-intro.mp4"><img src="assets/fssr-intro-poster.jpg" alt="FSSR intro video (0:48), click to play" width="100%"/></a>
 
 # Improving Cross-Domain Generalization in Brain MRIs via Feature Space Stability Regularization
 
@@ -113,6 +113,7 @@ Images are converted to single-channel grayscale and resized to 224 × 224. No i
 
 ```text
 .
+├── assets/            # Intro video and poster
 ├── src/
 │   └── main.py          # End-to-end pipeline (exported from the Colab notebook)
 ├── requirements.txt
