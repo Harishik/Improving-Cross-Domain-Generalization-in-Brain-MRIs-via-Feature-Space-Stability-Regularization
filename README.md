@@ -50,24 +50,55 @@ $$
 | --- | --- |
 | Intensity scaling | uniform factor in [0.9, 1.1] |
 | Gaussian noise | σ = 1% of the image standard deviation |
-| Gaussian blur | 3×3 kernel, σ = 0.8, applied with p = 0.5 |
+| Spatial smoothing | 3×3 average pooling, applied with p = 0.5 |
 
-λ is selected per backbone from a stability sweep over {0, 0.01, 0.05, 0.1} (e.g. λ = 0.05 for ResNet-18, λ = 0.002 for DenseNet-121).
+λ = 0.05 for all backbones, selected from a sweep over {0, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2}. The ablation in the paper shows the full combination (scale + noise + smoothing) beats every single component and every pair.
+
+### Training setup
+
+| Setting | Value |
+| --- | --- |
+| Input | 224 × 224, grayscale, area-based resizing |
+| Initialization | Random (trained from scratch) |
+| Optimizer | AdamW, learning rate 1e-4 |
+| Batch size | 32 |
+| Epochs | up to 25, early stopping with patience 5 |
+| FSSR weight λ | 0.05 |
 
 ## Results
 
-**Source domain (Kaggle Brain MRI):** the best configuration reaches **97.71% accuracy** and **97.55% macro-F1**.
+All models are trained only on Kaggle Brain MRI and evaluated zero-shot on BRISC-2025. Domain gap = Kaggle accuracy − BRISC-2025 accuracy.
 
-**Zero-shot target domain (BRISC-2025):**
+| Backbone | Method | Kaggle Acc | Kaggle F1 | BRISC Acc | BRISC F1 | Domain gap ↓ |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| ResNet-18 | Baseline (CE) | 95.50 | 95.15 | 90.50 | 89.38 | 5.00 |
+| | SimCLR | 94.28 | 93.90 | 85.40 | 81.72 | 8.88 |
+| | MixStyle | 91.30 | 90.72 | 85.60 | 84.29 | 5.70 |
+| | **FSSR (ours)** | 95.27 | 94.91 | 90.50 | **89.49** | **4.77** |
+| ResNet-34 | Baseline (CE) | 95.73 | 95.42 | 85.50 | 80.12 | 10.23 |
+| | SimCLR | 93.52 | 93.15 | 86.00 | 83.47 | 7.52 |
+| | MixStyle | 93.90 | 93.55 | 87.00 | 84.54 | 6.90 |
+| | **FSSR (ours)** | **97.71** | **97.55** | **93.70** | **92.62** | **4.01** |
+| DenseNet-121 | Baseline (CE) | 96.03 | 95.75 | 94.20 | 94.32 | 1.83 |
+| | SimCLR | 93.75 | 93.40 | 91.10 | 90.56 | 2.65 |
+| | MixStyle | 92.37 | 92.12 | 89.10 | 89.06 | 3.27 |
+| | **FSSR (ours)** | **97.64** | **97.47** | **96.70** | **96.87** | **0.94** |
 
-| | |
-| --- | --- |
-| Accuracy gain from FSSR | up to **+8.20 pp** |
-| Macro-F1 gain from FSSR | up to **+12.50 pp** |
-| DenseNet-121 + FSSR | **96.70% accuracy**, **96.87% macro-F1** |
-| Source → target domain gap | only **0.94%** |
+**Highlights**
 
-Feature-space analysis shows FSSR consistently lowers both the mean and the variance of feature deviation under perturbation across all three backbones. Confusion matrices show less class confusion and steadier recall on the harder tumor categories. Full tables and figures are in the [paper](https://doi.org/10.3390/math14061082).
+- **+8.20 pp** BRISC-2025 accuracy and **+12.50 pp** macro-F1 for ResNet-34 (accuracy gain 95% CI [6.10, 10.30], p < 0.001).
+- **96.70%** accuracy and **96.87%** macro-F1 on unseen data with DenseNet-121, a domain gap of only **0.94%**.
+- Better calibration on the target domain: ResNet-34 ECE drops from 0.1166 to 0.0400, and DenseNet-121 from 0.0325 to 0.0166.
+
+**Feature stability:** mean ‖z − z̃‖₂ deviation under perturbation.
+
+| Backbone | Baseline mean / std | FSSR mean / std | Δ mean | Δ std |
+| --- | --- | --- | ---: | ---: |
+| ResNet-18 | 4.513 / 5.182 | 3.602 / 2.467 | −20.2% | −52.4% |
+| ResNet-34 | 4.506 / 5.136 | 3.499 / 2.313 | −22.3% | −55.0% |
+| DenseNet-121 | 4.565 / 5.157 | 3.474 / 2.168 | −23.9% | −58.0% |
+
+Full tables, ablations, λ sweeps, confusion matrices and calibration analysis are in the [paper](https://doi.org/10.3390/math14061082).
 
 ## Datasets
 
@@ -96,13 +127,13 @@ Images are converted to single-channel grayscale and resized to 224 × 224. No i
 | 1 – 2 | Environment checks, Kaggle ZIP audit and extraction |
 | BRISC scan | Class discovery and integrity checks for BRISC-2025 |
 | 5A – 5C | Label discovery, stratified 80/20 split, 3-fold `StratifiedKFold` manifests |
-| 6 – 7.5 | Intensity and resolution audit; definition and quantitative check (SSIM/PSNR) of the MRI-safe augmentations |
+| 6 – 7.5 | Intensity and resolution audit; exploratory augmentations with an SSIM/PSNR check |
 | 8 | `Dataset` / `DataLoader` (grayscale, 224 × 224) |
 | 9 | 1-channel ResNet-18, ResNet-34 and DenseNet-121 backbones that return `(logits, features)` |
 | 10 – 10.5 | FSSR loss, gradient-flow check across the λ grid, micro-overfit sanity checks |
 | 11 | Feature-stability measurement: CE baseline vs FSSR |
-| 12 | Multi-backbone cross-validation with per-epoch logs |
-| 14 – 14H | Final training (up to 25 epochs, AMP), full metrics, confusion matrices and error heatmaps (300 DPI TIFF) |
+| 12 | Multi-backbone cross-validation with per-epoch logs (final perturbation set with 3×3 average-pool smoothing) |
+| 14 – 14H | Final training (AdamW, up to 25 epochs, early stopping, AMP), full metrics, confusion matrices and error heatmaps (300 DPI TIFF) |
 | 15 | BRISC-2025 cross-validation and zero-shot external evaluation |
 
 ## Getting started
