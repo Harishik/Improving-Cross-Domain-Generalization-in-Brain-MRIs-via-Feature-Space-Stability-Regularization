@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the paper below."
+title: "Improving Cross-Domain Generalization in Brain MRIs via Feature Space Stability Regularization"
+authors:
+  - family-names: Kakon
+    given-names: Shawon Chakrabarty
+    orcid: "https://orcid.org/0009-0005-5548-9805"
+    affiliation: "Department of Artificial Intelligence and Big Data, Woosong University"
+  - family-names: Jamwal
+    given-names: Harishik Dev Singh
+    orcid: "https://orcid.org/0009-0007-6781-2803"
+    affiliation: "Department of Artificial Intelligence and Big Data, Woosong University"
+  - family-names: Singh
+    given-names: Saurabh
+    orcid: "https://orcid.org/0000-0003-1118-9569"
+    affiliation: "Department of Artificial Intelligence and Big Data, Woosong University"
+repository-code: "https://github.com/Harishik/Improving-Cross-Domain-Generalization-in-Brain-MRIs-via-Feature-Space-Stability-Regularization"
+keywords:
+  - brain MRI
+  - domain generalization
+  - feature space regularization
+  - brain tumor classification
+  - deep learning
+preferred-citation:
+  type: article
+  title: "Improving Cross-Domain Generalization in Brain MRIs via Feature Space Stability Regularization"
+  authors:
+    - family-names: Kakon
+      given-names: Shawon Chakrabarty
+    - family-names: Jamwal
+      given-names: Harishik Dev Singh
+    - family-names: Singh
+      given-names: Saurabh
+  journal: "Mathematics"
+  volume: 14
+  issue: 6
+  start: 1082
+  year: 2026
+  month: 3
+  doi: "10.3390/math14061082"
